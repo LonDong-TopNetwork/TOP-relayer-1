@@ -40,6 +40,59 @@ func zeroPad(bytes []byte, num int) []byte {
 	return bytes
 }
 
+func CalcDagRoot(epoch uint64) ([]byte, error) {
+	cache, err := ethashproof.LoadCache(int(epoch))
+	if err != nil {
+		if futureEpochProcessing {
+			logger.Debug("waiting for futureEpochProcessing...")
+			totalTime := 0
+			for {
+				time.Sleep(time.Duration(5) * time.Second)
+				totalTime += 5
+				if !futureEpochProcessing || totalTime > 3600 {
+					break
+				}
+			}
+			cache, err = ethashproof.LoadCache(int(epoch))
+		}
+
+		if err != nil {
+			logger.Info("epoch %v cache is missing, calculate dataset merkle tree to create the cache first...", epoch)
+			_, err = ethashproof.CalculateDatasetMerkleRoot(epoch, true)
+			if err != nil {
+				logger.Error("Creating cache failed: ", err)
+				return nil, err
+			}
+			cache, err = ethashproof.LoadCache(int(epoch))
+			if err != nil {
+				logger.Error("Getting cache failed after trying to create it, abort: ", err)
+				return nil, err
+			}
+		}
+	}
+
+	// Remove outdated epoch
+	if epoch > 1 {
+		outdatedEpoch := epoch - 2
+		err = os.Remove(ethash.PathToDAG(outdatedEpoch, ethash.DefaultDir))
+		if err != nil {
+			if os.IsNotExist(err) {
+			} else {
+				logger.Error("Remove DAG: ", err)
+			}
+		}
+
+		err = os.Remove(ethashproof.PathToCache(outdatedEpoch))
+		if err != nil {
+			if os.IsNotExist(err) {
+			} else {
+				logger.Error("Remove cache error: ", err)
+			}
+		}
+	}
+	return cache.RootHash.Bytes(), nil
+}
+
 func EthashWithProofs(h uint64, header *types.Header) (Output, error) {
 	epoch := h / BLOCKS_PER_EPOCH
 	cache, err := ethashproof.LoadCache(int(epoch))

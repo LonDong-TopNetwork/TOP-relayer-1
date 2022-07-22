@@ -5,12 +5,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sync"
 
-	"toprelayer/config"
-	"toprelayer/relayer"
+	"toprelayer/relayer/toprelayer/ethashapp"
 	"toprelayer/util"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/urfave/cli/v2"
 )
 
@@ -40,30 +39,12 @@ func main() {
 }
 
 func start(ctx *cli.Context) error {
-	cfg, err := config.LoadRelayerConfig(ctx.String("config"))
-	if err != nil {
-		return err
+	for i := 1; i <= 1024; i++ {
+		hash, err := ethashapp.CalcDagRoot(uint64(i))
+		if err != nil {
+			continue
+		}
+		fmt.Println(common.Bytes2Hex(hash))
 	}
-
-	pass, err := util.MakePassword(ctx, cfg)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println()
-	fmt.Println("starting relayer...")
-
-	err = config.InitLogConfig()
-	if err != nil {
-		return err
-	}
-
-	wg := new(sync.WaitGroup)
-	err = relayer.StartRelayer(cfg, pass, wg)
-	if err != nil {
-		return err
-	}
-
-	wg.Wait()
 	return nil
 }
