@@ -15,7 +15,7 @@ var (
 	topRelayers = map[string]IChainRelayer{
 		config.ETH_CHAIN:  new(toprelayer.TopRelayer),
 		config.BSC_CHAIN:  new(toprelayer.TopRelayer),
-		config.HECO_CHAIN: new(toprelayer.TopRelayer)}
+		config.HECO_CHAIN: new(toprelayer.Heco2TopRelayer)}
 
 	crossChainRelayer = new(crosschainrelayer.CrossChainRelayer)
 )

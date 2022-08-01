@@ -72,21 +72,21 @@ func EthashWithProofs(h uint64, header *types.Header) (Output, error) {
 		}
 	}
 
-	if futureEpoch != epoch+1 {
-		if !futureEpochProcessing && !ethashproof.ExistCache(int(epoch+1)) {
-			futureEpochProcessing = true
-			logger.Info("future epoch %v cache is missing, calculate dataset merkle tree to create the cache first...", epoch+1)
-			go func() {
-				_, e := ethashproof.CalculateDatasetMerkleRoot(epoch+1, true)
-				if e != nil || !ethashproof.ExistCache(int(epoch+1)) {
-					logger.Error("Creating cache failed: ", err)
-				} else {
-					futureEpoch = epoch + 1
-				}
-				futureEpochProcessing = false
-			}()
-		}
-	}
+	// if futureEpoch != epoch+1 {
+	// 	if !futureEpochProcessing && !ethashproof.ExistCache(int(epoch+1)) {
+	// 		futureEpochProcessing = true
+	// 		logger.Info("future epoch %v cache is missing, calculate dataset merkle tree to create the cache first...", epoch+1)
+	// 		go func() {
+	// 			_, e := ethashproof.CalculateDatasetMerkleRoot(epoch+1, true)
+	// 			if e != nil || !ethashproof.ExistCache(int(epoch+1)) {
+	// 				logger.Error("Creating cache failed: ", err)
+	// 			} else {
+	// 				futureEpoch = epoch + 1
+	// 			}
+	// 			futureEpochProcessing = false
+	// 		}()
+	// 	}
+	// }
 
 	// Remove outdated epoch
 	if epoch > 1 {
