@@ -117,7 +117,7 @@ func (te *CrossChainRelayer) Init(chainName string, cfg *config.Relayer, listenU
 }
 
 func (te *CrossChainRelayer) submitTopHeader(headers []byte) error {
-	logger.Info("CrossChainRelayer", te.name, "raw data:", common.Bytes2Hex(headers))
+	logger.Info("CrossChainRelayer", te.name, "AddLightClientBlocks raw data:", common.Bytes2Hex(headers))
 	nonce, err := te.wallet.NonceAt(context.Background(), te.wallet.Address(), nil)
 	if err != nil {
 		return err
@@ -127,18 +127,18 @@ func (te *CrossChainRelayer) submitTopHeader(headers []byte) error {
 		logger.Error("CrossChainRelayer", te.name, "GasPrice error:", err)
 		return err
 	}
-	packHeaders, err := topclient.PackSyncParam(headers)
-	if err != nil {
-		logger.Error("CrossChainRelayer", te.name, "PackSyncParam error:", err)
-		return err
-	}
-	gaslimit, err := te.wallet.EstimateGas(context.Background(), &te.contract, packHeaders)
-	if err != nil {
-		logger.Error("CrossChainRelayer", te.name, "EstimateGas error:", err)
-		return err
-	}
+	// packHeaders, err := topclient.PackSyncParam(headers)
+	// if err != nil {
+	// 	logger.Error("CrossChainRelayer", te.name, "PackSyncParam error:", err)
+	// 	return err
+	// }
+	// gaslimit, err := te.wallet.EstimateGas(context.Background(), &te.contract, packHeaders)
+	// if err != nil {
+	// 	logger.Error("CrossChainRelayer", te.name, "EstimateGas error:", err)
+	// 	return err
+	// }
 	//test mock
-	//gaslimit := uint64(500000)
+	gaslimit := uint64(800000)
 
 	balance, err := te.wallet.BalanceAt(context.Background(), te.wallet.Address(), nil)
 	if err != nil {
@@ -268,13 +268,13 @@ func (te *CrossChainRelayer) verifyAndSendTransaction() {
 		logger.Error("txList get front error")
 		return
 	}
-	if te.serverEnable {
-		if !te.serverVerify(info.VerifyList) {
-			logger.Info("%v verify not pass", info.Block.Hash)
-			return
-		}
-		logger.Info("%v verify pass", info.Block.Hash)
-	}
+	// if te.serverEnable {
+	// 	if !te.serverVerify(info.VerifyList) {
+	// 		logger.Info("%v verify not pass", info.Block.Hash)
+	// 		return
+	// 	}
+	// 	logger.Info("%v verify pass", info.Block.Hash)
+	// }
 	// send transaction
 	var batchHeaders [][]byte
 	batchHeaders = append(batchHeaders, common.Hex2Bytes(info.Block.Header[2:]))
