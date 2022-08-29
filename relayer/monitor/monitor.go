@@ -70,14 +70,17 @@ func New(account common.Address, url string) (*Monitor, error) {
 
 func (monitor *Monitor) AddTx(hash common.Hash) {
 	if monitor.txList.Len() == 0 {
+		logger.Debug("TagTotalTxCount increase:", common.Big1)
 		increaseCounter(TagTotalTxCount, common.Big1)
 		monitor.txList.PushBack(hash)
 		return
 	}
 	last_hash, _ := monitor.txList.Back().Value.(common.Hash)
 	if last_hash == hash {
+		logger.Debug("TagRepeatTxCount increase:", common.Big1)
 		increaseCounter(TagRepeatTxCount, common.Big1)
 	} else {
+		logger.Debug("TagTotalTxCount increase:", common.Big1)
 		increaseCounter(TagTotalTxCount, common.Big1)
 		monitor.txList.PushBack(hash)
 	}
@@ -111,6 +114,7 @@ func (monitor *Monitor) checkTx(errorNum *uint64) {
 
 		logger.Debug("%v tx: %v, status: %v, gasUsed: %v", category, hash, receipt.Status, receipt.GasUsed)
 		if receipt.Status == 1 {
+			logger.Debug("TagSuccessTxCount increase:", common.Big1)
 			increaseCounter(TagSuccessTxCount, common.Big1)
 		}
 		pushRealtime(TagGas, receipt.GasUsed, hash.Hex())

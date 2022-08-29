@@ -109,10 +109,13 @@ func MonitorMsgInit(relayer string) error {
 func increaseCounter(tag string, value *big.Int) error {
 	if tag == TagTotalTxCount {
 		totalTxCount = common.Big0.Add(totalTxCount, value)
+		logger.Debug("totalTxCount value:", totalTxCount)
 	} else if tag == TagRepeatTxCount {
 		repeatTxCount = common.Big0.Add(repeatTxCount, value)
+		logger.Debug("repeatTxCount value:", repeatTxCount)
 	} else if tag == TagSuccessTxCount {
 		successTxCount = common.Big0.Add(successTxCount, value)
+		logger.Debug("successTxCount value:", successTxCount)
 	} else {
 		return fmt.Errorf("increaseCounter not found tag %v", tag)
 	}
@@ -153,6 +156,7 @@ func pushCounterMsg() {
 	{
 		msg := counterMsg{Category: category, Tag: TagTotalTxCount, Name: "counter", Content: counterMsgContent{Count: timerCounter, Value: totalTxCount}}
 		j, err := json.Marshal(msg)
+		logger.Debug("push totalTxCount:", totalTxCount, msg)
 		if err == nil {
 			msgList.PushBack(string(j))
 		}
@@ -160,6 +164,7 @@ func pushCounterMsg() {
 	{
 		msg := counterMsg{Category: category, Tag: TagRepeatTxCount, Name: "counter", Content: counterMsgContent{Count: timerCounter, Value: repeatTxCount}}
 		j, err := json.Marshal(msg)
+		logger.Debug("push repeatTxCount:", repeatTxCount, msg)
 		if err == nil {
 			msgList.PushBack(string(j))
 		}
@@ -167,6 +172,7 @@ func pushCounterMsg() {
 	{
 		msg := counterMsg{Category: category, Tag: TagSuccessTxCount, Name: "counter", Content: counterMsgContent{Count: timerCounter, Value: successTxCount}}
 		j, err := json.Marshal(msg)
+		logger.Debug("push successTxCount:", successTxCount, msg)
 		if err == nil {
 			msgList.PushBack(string(j))
 		}
@@ -176,8 +182,10 @@ func pushCounterMsg() {
 		if totalTxCount.Cmp(common.Big0) > 0 {
 			cnt := common.Big0.Mul(successTxCount, big.NewInt(100))
 			rate = common.Big0.Div(cnt, totalTxCount)
+			logger.Debug("push TagSuccessTxRate:", cnt, successTxCount, totalTxCount)
 		}
 		msg := counterMsg{Category: category, Tag: TagSuccessTxRate, Name: "counter", Content: counterMsgContent{Count: timerCounter, Value: rate}}
+		logger.Debug("push TagSuccessTxRate:", TagSuccessTxRate, msg)
 		j, err := json.Marshal(msg)
 		if err == nil {
 			msgList.PushBack(string(j))

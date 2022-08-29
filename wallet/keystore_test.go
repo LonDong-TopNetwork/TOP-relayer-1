@@ -1,9 +1,11 @@
 package wallet
 
 import (
+	"math/big"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func TestCreateAccount(t *testing.T) {
@@ -37,4 +39,15 @@ func TestUnlockAccount(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log("unlock acc ok! ", acc.Address)
+}
+
+func TestX(t *testing.T) {
+	var rate = common.Big0
+	totalTxCount := big.NewInt(10)
+	successTxCount := big.NewInt(9)
+	if totalTxCount.Cmp(common.Big0) > 0 {
+		cnt := common.Big0.Mul(successTxCount, big.NewInt(100))
+		rate = common.Big0.Div(cnt, totalTxCount)
+	}
+	t.Log(rate)
 }
