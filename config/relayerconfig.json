@@ -20,9 +20,5 @@
             "keypath": ".relayer/wallet/heco"
         }
     },
-    "relayer_to_run": "TOP",
-    "server": {
-        "url": "",
-        "enable": "false"
-    }
+    "relayer_to_run": "TOP"
 }

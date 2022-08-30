@@ -34,10 +34,6 @@ const (
 	}`
 )
 
-var (
-	ServerConfig Server
-)
-
 type Relayer struct {
 	//submit config
 	Url      string `json:"url"`
@@ -45,15 +41,9 @@ type Relayer struct {
 	KeyPath  string `json:"keypath"`
 }
 
-type Server struct {
-	Url    string `json:"url"`
-	Enable string `json:"enable"`
-}
-
 type Config struct {
 	RelayerConfig map[string]*Relayer `json:"relayer_config"`
 	RelayerToRun  string              `json:"relayer_to_run"`
-	ServerConfig  Server              `json:"server"`
 }
 
 func LoadRelayerConfig(path string) (*Config, error) {
@@ -68,7 +58,6 @@ func LoadRelayerConfig(path string) (*Config, error) {
 		log.Fatal("Unmarshal config file failed:", err)
 		return nil, err
 	}
-	ServerConfig = config.ServerConfig
 	return config, nil
 }
 

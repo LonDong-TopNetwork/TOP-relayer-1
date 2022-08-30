@@ -1,3 +1,3 @@
-go build -o xrelayer main.go
+go build -tags=normal -o xrelayer main.go
 
 
