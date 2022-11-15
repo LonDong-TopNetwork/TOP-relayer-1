@@ -21,6 +21,11 @@ func versionPrint(ctx *cli.Context) error {
 	return nil
 }
 
+func getInitData(ctx *cli.Context) error {
+	fmt.Println("init data")
+	return nil
+}
+
 var (
 	VersionCommand = &cli.Command{
 		Action:    versionPrint,
@@ -30,6 +35,16 @@ var (
 		Category:  "MISCELLANEOUS COMMANDS",
 		Description: `
 The output of this command is supposed to be machine-readable.
+`,
+	}
+	GetInitDataCommand = &cli.Command{
+		Action:    getInitData,
+		Name:      "init",
+		Usage:     "Print init data",
+		ArgsUsage: " ",
+		Category:  "MISCELLANEOUS COMMANDS",
+		Description: `
+The output of this command is hex data.
 `,
 	}
 )
